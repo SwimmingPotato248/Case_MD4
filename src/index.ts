@@ -6,6 +6,7 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT;
+app.use(express.json());
 
 mongoose.connect(process.env.DATABASE_URL!, err => {
   if (err) console.error(err);
