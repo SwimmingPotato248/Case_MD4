@@ -3,4 +3,5 @@ import loginController from "../controller/login-controller";
 
 
 export const routerLogin = Router()
-routerLogin.get('/', loginController.)
+routerLogin.post('/register', loginController.register)
+routerLogin.post('/login', loginController.login)

@@ -5,7 +5,7 @@ enum status {
     unavailable
 }
 
-interface IProduct {
+export interface IProduct {
     name: string;
     image: string;
     description: string;
@@ -25,5 +25,4 @@ let productSchema = new Schema<IProduct>({
     quantitySold: Number
 })
 
-const Product = model<IProduct>('Product', productSchema);
-export {Product}
+export const Products = model<IProduct>('Products', productSchema);

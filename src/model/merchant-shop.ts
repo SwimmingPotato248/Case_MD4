@@ -17,5 +17,4 @@ let merchantShop = new Schema<IMerchantShop>({
     information: String
 })
 
-const MerchantShop = model<IMerchantShop>('MerchantShop', merchantShop);
-export {MerchantShop}
+export const MerchantShop = model<IMerchantShop>('MerchantShop', merchantShop);

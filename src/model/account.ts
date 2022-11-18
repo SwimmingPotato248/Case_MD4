@@ -1,26 +1,23 @@
-import {Schema,model} from "mongoose";
-enum Role{
-    user,
-    merchant,
-    admin
-}
-enum Status{
-    active,
-    inactive
-}
+import {Schema, model} from "mongoose";
 
-interface IAccount{
+interface IAccount {
     username: string
-    password : string,
-    status : Status.active,
-    role : Role.user
+    password: string,
+    status: boolean,
+    role: number
 }
 
 const accountSchemas = new Schema<IAccount>({
-    username : String,
-    password : String,
-    status: Status.active,
-    role : Role.user
+    username: String,
+    password: String,
+    status: {
+        type: Boolean,
+        default: true
+    },
+    role: {
+        type: Number,
+        default:0
+    }
 })
 
-export const Account = model<IAccount>('Account',accountSchemas)
+export const Account = model<IAccount>('Account', accountSchemas)
