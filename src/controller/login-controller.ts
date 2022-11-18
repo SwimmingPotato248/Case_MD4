@@ -2,13 +2,24 @@ import {Request, Response} from "express";
 import bcrypt from "bcrypt";
 import {Account} from "../model/account";
 import jwt from "jsonwebtoken"
+import {SECRET} from "../middleware/auth";
 
 export class LoginController {
     register = async (req: Request, res: Response) => {
         let account = req.body
-        account.password = await bcrypt.hash(account.password, 10)
-        account = await Account.create(account)
-        return res.status(201).json(account)
+        let findAccount = await Account.findOne({
+            username: account.username
+        })
+        if(findAccount){
+            return res.status(203).json({
+                message: "Account already exists"
+            })
+        } else {
+            account.password = await bcrypt.hash(account.password, 10)
+            account = await Account.create(account)
+            return res.status(201).json(account)
+        }
+
     }
     login = async (req: Request, res: Response) => {
         let account = req.body
@@ -32,8 +43,8 @@ export class LoginController {
                     status: findAccount.status,
                     role: findAccount.role
                 }
-                let secret = '18!11'
-                let token =  jwt.sign(payload, secret, {
+
+                let token =  jwt.sign(payload, SECRET, {
                     expiresIn: 12*60*60*1000
                 } )
                 return res.status(200).json({
