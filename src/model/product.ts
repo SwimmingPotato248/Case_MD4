@@ -1,22 +1,29 @@
 import {model, Schema} from "mongoose";
 
-interface IProduct {
-    name ?: string;
-    image ?: string;
-    description ?: string;
-    quantity ?: number;
-    importPrice ?: number;
-    exportPrice ?:number;
+enum status {
+    available,
+    unavailable
 }
 
-let ProductSchema = new Schema<IProduct>({
-    name : String,
-    image : String,
-    description : String,
-    quantity : Number,
-    importPrice : Number,
-    exportPrice : Number
+interface IProduct {
+    name: string;
+    image: string;
+    description: string;
+    price: number;
+    discount?: number;
+    status: status
+    quantitySold: number
+}
+
+let productSchema = new Schema<IProduct>({
+    name: String,
+    image: String,
+    description: String,
+    price: Number,
+    discount: Number,
+    status: status.available,
+    quantitySold: Number
 })
 
-const Product = model<IProduct>('Product', ProductSchema);
+const Product = model<IProduct>('Product', productSchema);
 export {Product}

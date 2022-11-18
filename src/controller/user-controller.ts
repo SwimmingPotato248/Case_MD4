@@ -9,7 +9,7 @@ export class UserController {
     }
 
     showAll = async (req: Request, res: Response) => {
-        await this.userService.
+
     }
 }
 
