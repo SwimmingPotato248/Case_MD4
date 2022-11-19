@@ -2,6 +2,7 @@ import {Request, Response} from "express";
 import {Products} from "../model/product";
 import {Account} from "../model/account";
 import {MerchantShop} from "../model/merchant-shop";
+import {Bills} from "../model/bills";
 
 export class MerChantController {
     showProducts = async (req: Request, res: Response) => {
@@ -58,6 +59,20 @@ export class MerChantController {
     //         message: 'update done'
     //     })
     // }
+
+    showBills = async (req: Request, res: Response) => {
+        let account = await Account.find({username: req.params.username, role: 1})
+        let bills = await Bills.find({account_merchant: account[0]._id}).populate('bills', 'username')
+        return res.status(200).json(bills)
+    }
+    showBillDetails = async (req: Request, res: Response) => {
+        let account = await Account.find({username: req.params.username, role: 1})
+        let bill = await Bills.find({
+            account_merchant: account[0]._id,
+            account_customer: req.params.billId
+        }).populate('bills', 'username')
+        return res.status(200).json(bill)
+    }
 
 }
 
