@@ -5,4 +5,5 @@ import {auth} from "../middleware/auth";
 export const routerUser = Router()
 routerUser.get('/')
 routerUser.use(auth);
+routerUser.post('/:username/register', userController.registerMerchant)
 
