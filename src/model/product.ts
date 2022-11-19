@@ -1,9 +1,5 @@
 import {model, Schema} from "mongoose";
-
-enum status {
-    available,
-    unavailable
-}
+import {IAccount} from "./account";
 
 export interface IProduct {
     name: string;
@@ -11,8 +7,9 @@ export interface IProduct {
     description: string;
     price: number;
     discount?: number;
-    status: status
+    status: boolean
     quantitySold: number
+    account: IAccount
 }
 
 let productSchema = new Schema<IProduct>({
@@ -21,8 +18,18 @@ let productSchema = new Schema<IProduct>({
     description: String,
     price: Number,
     discount: Number,
-    status: status.available,
-    quantitySold: Number
+    status: {
+        type: Boolean,
+        default: true
+    },
+    quantitySold: {
+        type: Number,
+        default: 0
+    },
+    account :{
+        type: Schema.Types.ObjectId,
+        ref: 'Account'
+    }
 })
 
 export const Products = model<IProduct>('Products', productSchema);

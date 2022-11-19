@@ -3,16 +3,16 @@ import {ICategory} from "./category";
 import {IProduct} from "./product";
 
 interface ICategoryProduct {
-    category: ICategory,
-    product: IProduct
+    category_id: ICategory,
+    product_id: IProduct
 }
 
 let categoryProduct = new Schema<ICategoryProduct>({
-    category: {
+    category_id: {
         type: Schema.Types.ObjectId,
         ref: 'Category'
     },
-    product: {
+    product_id: {
         type: Schema.Types.ObjectId,
         ref: 'Products'
     }

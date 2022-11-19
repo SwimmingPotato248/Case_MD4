@@ -19,15 +19,15 @@ export class AdminController {
             }
             listMerchant.push(merchant)
         })
-        return res.status(201).json(listMerchant)
+        return res.status(200).json(listMerchant)
     }
 
-    merchantDetail = async (req: Request, res: Response) => {
-        console.log(req.params.username)
-        let merchant = await MerchantShop.findOne({
-            username: req.params.username})
-        return res.status(201).json(merchant)
-    }
+    // merchantDetail = async (req: Request, res: Response) => {
+    //     console.log(req.params.username)
+    //     let merchant = await MerchantShop.findOne({
+    //         username: req.params.username})
+    //     return res.status(200).json(merchant)
+    // }
 
     changeStatusMerchant = async (req: Request, res: Response) => {
         let merchants = await Account.find({username: req.params.username, role: 1})
@@ -38,7 +38,7 @@ export class AdminController {
                 {
                     $set: {status: false}
                 })
-            return res.status(201).json(merchants)
+            return res.status(200).json(merchants)
         } else {
             merchants[0].status = true
             await Account.updateOne(
@@ -46,7 +46,7 @@ export class AdminController {
                 {
                     $set: {status: true}
                 })
-            return res.status(201).json(merchants)
+            return res.status(200).json(merchants)
         }
     }
 }
