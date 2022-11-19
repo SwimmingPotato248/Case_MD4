@@ -6,6 +6,6 @@ import {routerUser} from "./router-user";
 export const routerAdmin = Router()
 // routerUser.use(auth)
 routerAdmin.get('/', adminController.showHome)
-routerAdmin.get('/merchant', adminController.showMerchant)
+routerAdmin.get('/merchants', adminController.showMerchant)
 routerAdmin.post('/status/:username', adminController.changeStatusMerchant)
-// routerAdmin.post('/details/:username', adminController.merchantDetail)
+// routerAdmin.get('/merchants/:username', adminController.merchantDetail)

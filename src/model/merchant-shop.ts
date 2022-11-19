@@ -10,14 +10,14 @@ interface IMerchantShop {
     nameShop: string,
     address : string,
     information: string
-    username: IAccount
+    account: IAccount
 }
 
 let merchantShop = new Schema<IMerchantShop>({
     nameShop: String,
     address: String,
     information: String,
-    username:{
+    account:{
         type: Schema.Types.ObjectId,
         ref: 'Account'
     }
