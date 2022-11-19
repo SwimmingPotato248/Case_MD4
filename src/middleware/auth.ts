@@ -24,6 +24,7 @@ export const auth = (req, res, next) => {
                         next()
                     } else if (data.role === MERCHANT) {
                         req.decode = data
+                        console.log(req.decode)
                         next()
                     } else if (data.role === ADMIN) {
                         req.decode = data

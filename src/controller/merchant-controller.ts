@@ -21,6 +21,13 @@ export class MerChantController {
             message: 'update done'
         })
     }
+    deleteProduct = async (req: Request, res: Response) => {
+        let account = await Account.find({username: req.params.username, role: 1})
+        await Products.deleteOne({_id: req.params.productId, account: account[0]._id})
+        return res.status(200).json({
+            message: 'delete done'
+        })
+    }
 
 }
 
