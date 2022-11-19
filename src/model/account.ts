@@ -1,6 +1,6 @@
 import {Schema, model} from "mongoose";
 
-interface IAccount {
+export interface IAccount {
     username: string
     password: string,
     status: boolean,
@@ -16,7 +16,7 @@ const accountSchemas = new Schema<IAccount>({
     },
     role: {
         type: Number,
-        default:0
+        default: 0
     }
 })
 
