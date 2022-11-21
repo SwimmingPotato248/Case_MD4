@@ -45,7 +45,7 @@ export class LoginController {
                 }
 
                 let token = jwt.sign(payload, SECRET, {
-                    expiresIn: 12 * 60 * 60 * 1000
+                    expiresIn: 7 * 24 * 60 * 60 * 1000
                 })
                 return res.status(200).json({
                     token: token

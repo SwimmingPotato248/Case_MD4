@@ -5,7 +5,9 @@ import {auth} from "../middleware/auth";
 export const routerUser = Router()
 routerUser.get('', userController.showHomePage)
 routerUser.get('/shops', userController.showShop)
-routerUser.get('/details/:nameShop', userController.detailsShop)
+routerUser.get('/:nameShop', userController.detailsShop)
+routerUser.get('/details/:productName', userController.detailsProduct)
+// routerUser.post('/search', userController.searchProduct)
 routerUser.use(auth);
-// routerUser.post('/:username/register', userController.registerMerchant)
-
+routerUser.post('/merchant/register', userController.registerMerchant)
+routerUser.post('/payment', userController.payment)

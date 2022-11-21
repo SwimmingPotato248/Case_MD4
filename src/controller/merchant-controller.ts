@@ -24,10 +24,18 @@ export class MerChantController {
         })
     }
     updateProduct = async (req: Request, res: Response) => {
-        await Products.updateOne({slug: req.params.productName}, req.body)
-        return res.status(200).json({
-            message: 'update done'
-        })
+        let token = await this.getToken(req)
+        let product = await Products.find({slug: req.params.productName, account: token.account_id})
+        if (product.length){
+            await Products.updateOne({slug: req.params.productName}, req.body)
+            return res.status(200).json({
+                message: 'Update product done'
+            })
+        }else {
+            return res.status(200).json({
+                message: "Product not found"
+            })
+        }
     }
     deleteProduct = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
@@ -64,12 +72,20 @@ export class MerChantController {
             })
         }
     }
-    // updateShop = async (req: Request, res: Response) => {
-    //     await MerchantShop.updateOne({_id: req.params.productId}, req.body)
-    //     return res.status(200).json({
-    //         message: 'update done'
-    //     })
-    // }
+    updateShop = async (req: Request, res: Response) => {
+        let token = await this.getToken(req)
+        let merchantShops = await MerchantShop.find({slug: req.params.nameShop, account: token.account_id})
+        if (merchantShops.length){
+            await MerchantShop.updateOne({slug: req.params.nameShop, account: token.account_id}, req.body)
+            return res.status(200).json({
+                message: 'update info shop done'
+            })
+        } else {
+            return res.status(200).json({
+                message: 'Shop not found'
+            })
+        }
+    }
 
     showBills = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
