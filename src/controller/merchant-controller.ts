@@ -5,15 +5,19 @@ import {MerchantShop} from "../model/merchant-shop";
 import {Bills} from "../model/bills";
 
 export class MerChantController {
+    getToken = async (req: any) => {
+        return req.decode
+    }
+
     showProducts = async (req: Request, res: Response) => {
-        let account = await Account.find({username: req.params.username, role: 1})
-        let products = await Products.find({account: account[0]._id}).populate('account', 'username')
+        let token = await this.getToken(req)
+        let products = await Products.find({account: token.account_id}).populate('account', 'username')
         return res.status(200).json(products)
     }
     createProduct = async (req: Request, res: Response) => {
         let product = req.body
-        let account = await Account.find({username: req.params.username, role: 1})
-        product.account = account[0]._id
+        let token = await this.getToken(req)
+        product.account = token.account_id
         await Products.create(product)
         return res.status(201).json({
             message: "Create new product done"
@@ -26,8 +30,8 @@ export class MerChantController {
         })
     }
     deleteProduct = async (req: Request, res: Response) => {
-        let account = await Account.find({username: req.params.username, role: 1})
-        await Products.deleteOne({_id: req.params.productId, account: account[0]._id})
+        let token = await this.getToken(req)
+        await Products.deleteOne({_id: req.params.productId, account: token.account_id})
         return res.status(200).json({
             message: 'delete done'
         })
@@ -40,14 +44,14 @@ export class MerChantController {
     //     return res.status(200).json(products)
     // }
     showHome = async (req: Request, res: Response) => {
-        let account = await Account.find({username: req.params.username, role: 1})
-        let infoShop = await MerchantShop.find({account: account[0]._id}).populate('account', 'username')
+        let token = await this.getToken(req)
+        let infoShop = await MerchantShop.find({account: token.account_id}).populate('account', 'username')
         return res.status(200).json(infoShop)
     }
     createShop = async (req: Request, res: Response) => {
         let infoShop = req.body
-        let account = await Account.find({username: req.params.username, role: 1})
-        infoShop.account = account[0]._id
+        let token = await this.getToken(req)
+        infoShop.account = token.account_id
         await MerchantShop.create(infoShop)
         return res.status(201).json({
             message: "Create new Shop done"
@@ -61,14 +65,14 @@ export class MerChantController {
     // }
 
     showBills = async (req: Request, res: Response) => {
-        let account = await Account.find({username: req.params.username, role: 1})
-        let bills = await Bills.find({account_merchant: account[0]._id}).populate('bills', 'username')
+        let token = await this.getToken(req)
+        let bills = await Bills.find({account_merchant: token.account_id}).populate('bills', 'username')
         return res.status(200).json(bills)
     }
     showBillDetails = async (req: Request, res: Response) => {
-        let account = await Account.find({username: req.params.username, role: 1})
+        let token = await this.getToken(req)
         let bill = await Bills.find({
-            account_merchant: account[0]._id,
+            account_merchant: token.account_id,
             account_customer: req.params.billId
         }).populate('bills', 'username')
         return res.status(200).json(bill)

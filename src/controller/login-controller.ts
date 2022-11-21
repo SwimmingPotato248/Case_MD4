@@ -10,7 +10,7 @@ export class LoginController {
         let findAccount = await Account.findOne({
             username: account.username
         })
-        if(findAccount){
+        if (findAccount) {
             return res.status(203).json({
                 message: "Account already exists"
             })
@@ -44,9 +44,9 @@ export class LoginController {
                     role: findAccount.role
                 }
 
-                let token =  jwt.sign(payload, SECRET, {
-                    expiresIn: 12*60*60*1000
-                } )
+                let token = jwt.sign(payload, SECRET, {
+                    expiresIn: 12 * 60 * 60 * 1000
+                })
                 return res.status(200).json({
                     token: token
                 })

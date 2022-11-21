@@ -5,7 +5,8 @@ export interface IBill {
     time: Date,
     account_customer: IAccount,
     address: string,
-    status: boolean,
+    payment_status: boolean,
+    confirm_bill: boolean,
     account_merchant: IAccount
 }
 
@@ -19,7 +20,11 @@ let billSchema = new Schema<IBill>({
         ref: 'Account'
     },
     address: String,
-    status:{
+    payment_status:{
+        type: Boolean,
+        default: false
+    },
+    confirm_bill:{
         type: Boolean,
         default: false
     },
