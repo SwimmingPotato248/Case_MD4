@@ -43,19 +43,26 @@ export class MerChantController {
     //     let products = await Products.find({name: /pho/})
     //     return res.status(200).json(products)
     // }
-    showHome = async (req: Request, res: Response) => {
+    showMyShop = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
         let infoShop = await MerchantShop.find({account: token.account_id}).populate('account', 'username')
         return res.status(200).json(infoShop)
     }
     createShop = async (req: Request, res: Response) => {
-        let infoShop = req.body
         let token = await this.getToken(req)
-        infoShop.account = token.account_id
-        await MerchantShop.create(infoShop)
-        return res.status(201).json({
-            message: "Create new Shop done"
-        })
+        let shops = await MerchantShop.find({account: token.account_id})
+        if (shops.length){
+            return res.status(200).json({
+                message: "You already have a store so you can't create more"
+            })
+        } else {
+            let infoShop = req.body
+            infoShop.account = token.account_id
+            await MerchantShop.create(infoShop)
+            return res.status(201).json({
+                message: "Create new Shop done"
+            })
+        }
     }
     // updateShop = async (req: Request, res: Response) => {
     //     await MerchantShop.updateOne({_id: req.params.productId}, req.body)
