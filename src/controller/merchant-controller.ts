@@ -24,14 +24,14 @@ export class MerChantController {
         })
     }
     updateProduct = async (req: Request, res: Response) => {
-        await Products.updateOne({_id: req.params.productId}, req.body)
+        await Products.updateOne({slug: req.params.productName}, req.body)
         return res.status(200).json({
             message: 'update done'
         })
     }
     deleteProduct = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
-        await Products.deleteOne({_id: req.params.productId, account: token.account_id})
+        await Products.deleteOne({slug: req.params.productName, account: token.account_id})
         return res.status(200).json({
             message: 'delete done'
         })

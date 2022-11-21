@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import {router} from "./router/router";
 import cookieParser from 'cookie-parser';
 
+
 dotenv.config();
 mongoose.connect(process.env.DATABASE_URL!, err => {
     if (err) console.error(err);
