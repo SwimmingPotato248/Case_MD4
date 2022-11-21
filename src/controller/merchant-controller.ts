@@ -63,7 +63,6 @@ export class MerChantController {
     //         message: 'update done'
     //     })
     // }
-
     showBills = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
         let bills = await Bills.find({account_merchant: token.account_id}).populate('bills', 'username')
@@ -78,6 +77,22 @@ export class MerChantController {
         return res.status(200).json(bill)
     }
 
+
+    deleteBill = async (req: Request, res: Response) => {
+        let token = await this.getToken(req)
+        await Bills.deleteOne({_id: req.params.billId, account: token.account_id})
+        return res.status(200).json({
+            message: 'delete done'
+        })
+    };
+    filterStatusBill = async (req: Request, res: Response) => {
+        let token = await this.getToken(req)
+        let bills = await Bills.find({payment_status: token.status}).populate('time')
+        return res.status(200).json(bills)
+    }
+   searchBill = async (req: Request, res: Response) => {
+
+   }
 }
 
 export default new MerChantController()

@@ -4,7 +4,7 @@ import {IProduct} from "./product";
 
 interface ICategoryProduct {
     category_id: ICategory,
-    product_id: IProduct
+    product_id: IProduct,
 }
 
 let categoryProduct = new Schema<ICategoryProduct>({

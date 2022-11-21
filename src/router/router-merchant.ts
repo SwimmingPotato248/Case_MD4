@@ -14,3 +14,6 @@ routerMerchant.post('/create/shops', merchantController.createShop)
 // routerMerchant.post('/update/shops', merchantController.updateShop)
 routerMerchant.get('/bills', merchantController.showBills)
 // routerMerchant.get('/bills/:billId', merchantController.showBillDetails)
+routerMerchant.post('/delete/:billId', merchantController.deleteBill)
+routerMerchant.get('/bills/status', merchantController.filterStatusBill)
+

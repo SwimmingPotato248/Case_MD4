@@ -1,11 +1,6 @@
 import {model, Schema} from "mongoose";
 import {IAccount} from "./account";
 
-enum status {
-    active,
-    inactive
-}
-
 interface IMerchantShop {
     nameShop: string,
     address : string,
