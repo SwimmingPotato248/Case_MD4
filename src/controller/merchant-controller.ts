@@ -36,13 +36,12 @@ export class MerChantController {
             message: 'delete done'
         })
     }
-    // search = async (req: Request, res: Response) => {
-    //     let searchKey = `/${req.body.searchKey}/`
-    //     console.log(searchKey)
-    //     // let products = await Products.find({name: searchKey})
-    //     let products = await Products.find({name: /pho/})
-    //     return res.status(200).json(products)
-    // }
+    searchProduct = async (req: Request , res: Response) => {
+        let searchProduct = await Products.find({'name' : new RegExp(req.body.name, 'i')});
+        return res.status(201).json(
+            searchProduct
+        )
+    }
     showHome = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
         let infoShop = await MerchantShop.find({account: token.account_id}).populate('account', 'username')
@@ -90,9 +89,24 @@ export class MerChantController {
         let bills = await Bills.find({payment_status: token.status}).populate('time')
         return res.status(200).json(bills)
     }
-   searchBill = async (req: Request, res: Response) => {
-
-   }
+    searchBillByName = async (req: Request , res: Response) => {
+        let searchBillByName = await Bills.find({'name' : new RegExp(req.body.name, 'i')});
+        return res.status(201).json(
+            searchBillByName
+        )
+    }
+    searchBillByPhone = async (req: Request , res: Response) => {
+        let searchBillByPhone = await Bills.find({'phoneNumber' : new RegExp(req.body.phoneNumber, 'i')});
+        return res.status(201).json(
+            searchBillByPhone
+        )
+    }
+    searchBillById = async (req: Request , res: Response) => {
+        let searchBillById = await Bills.find({'_id' : new RegExp(req.body._id, 'i')});
+        return res.status(201).json(
+            searchBillById
+        )
+    }
 }
 
 export default new MerChantController()

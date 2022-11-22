@@ -16,4 +16,9 @@ routerMerchant.get('/bills', merchantController.showBills)
 // routerMerchant.get('/bills/:billId', merchantController.showBillDetails)
 routerMerchant.post('/delete/:billId', merchantController.deleteBill)
 routerMerchant.get('/bills/status', merchantController.filterStatusBill)
+routerMerchant.post('/search/:id', merchantController.searchBillById)
+routerMerchant.post('/search/:name', merchantController.searchBillByName)
+routerMerchant.post('/search/:phoneNumber', merchantController.searchBillByPhone)
+
+
 
