@@ -26,12 +26,12 @@ export class MerChantController {
     updateProduct = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
         let product = await Products.find({slug: req.params.productName, account: token.account_id})
-        if (product.length){
+        if (product.length) {
             await Products.updateOne({slug: req.params.productName}, req.body)
             return res.status(200).json({
                 message: 'Update product done'
             })
-        }else {
+        } else {
             return res.status(200).json({
                 message: "Product not found"
             })
@@ -44,14 +44,7 @@ export class MerChantController {
             message: 'delete done'
         })
     }
-    // search = async (req: Request, res: Response) => {
-    //     let searchKey = `/${req.body.searchKey}/`
-    //     console.log(searchKey)
-    //     // let products = await Products.find({name: searchKey})
-    //     let products = await Products.find({name: /pho/})
-    //     return res.status(200).json(products)
-    // }
-    showHome = async (req: Request, res: Response) => {
+    showMyShop = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
         let infoShop = await MerchantShop.find({account: token.account_id}).populate('account', 'username')
         return res.status(200).json(infoShop)
@@ -59,7 +52,7 @@ export class MerChantController {
     createShop = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
         let shops = await MerchantShop.find({account: token.account_id})
-        if (shops.length){
+        if (shops.length) {
             return res.status(200).json({
                 message: "You already have a store so you can't create more"
             })
@@ -75,7 +68,7 @@ export class MerChantController {
     updateShop = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
         let merchantShops = await MerchantShop.find({slug: req.params.nameShop, account: token.account_id})
-        if (merchantShops.length){
+        if (merchantShops.length) {
             await MerchantShop.updateOne({slug: req.params.nameShop, account: token.account_id}, req.body)
             return res.status(200).json({
                 message: 'update info shop done'
@@ -101,7 +94,6 @@ export class MerChantController {
         return res.status(200).json(bill)
     }
 
-
     deleteBill = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
         await Bills.deleteOne({_id: req.params.billId, account: token.account_id})
@@ -113,25 +105,58 @@ export class MerChantController {
         let bills = await Bills.find({payment_status: req.params.payment_status}).populate('time')
         return res.status(200).json(bills)
     }
-    searchBillByName = async (req: Request , res: Response) => {
-        let searchUsername = await Account.find({username: req.params.username })
-        console.log(searchUsername)
-        // let searchBillByName = await Bills.find({account_merchant : new RegExp(req.params.username, 'i')});
-        return res.status(200).json(
-            searchUsername
-        )
+    searchBillById = async (req: Request, res: Response) => {
+        try {
+            let findBillsById = await Bills.find({_id: req.body.billId});
+            if (findBillsById.length != 0) {
+                return res.status(200).json(findBillsById)
+            } else {
+                return res.status(200).json({
+                    message: "Id not found"
+                })
+            }
+        } catch (err) {
+            return res.send(err.stack);
+        }
     }
-    searchBillByPhone = async (req: Request , res: Response) => {
-        let searchBillByPhone = await Bills.find({phoneNumber : new RegExp(req.params.phoneNumber, 'i')});
-        return res.status(200).json(
-            searchBillByPhone
-        )
+    searchBillByName = async (req: Request, res: Response) => {
+        let token = await this.getToken(req)
+        let findUsername = await Account.find({username: req.body.username, role: 0})
+        if (findUsername.length != 0) {
+            let findBillsByUsername = await Bills.find({
+                account_merchant: token.account_id,
+                account_customer: findUsername[0]._id
+            }).populate('account_customer', 'username')
+            if (findBillsByUsername.length != 0) {
+                return res.status(200).json(findBillsByUsername)
+            } else {
+                return res.status(200).json({
+                    message: "Username that hasn't purchased from your store"
+                })
+            }
+        } else {
+            return res.status(200).json({
+                message: "Username does not exist"
+            })
+        }
     }
-    searchBillById = async (req: Request , res: Response) => {
-        let searchBillById = await Bills.find({_id : req.params.id});
-        return res.status(200).json(
-            searchBillById
-        )
+    searchBillByPhone = async (req: Request, res: Response) => {
+        try{
+            let token = await this.getToken(req)
+            let findBillsByPhoneNumber = await Bills.find({
+                account_merchant: token.account_id,
+                phoneNumber: req.body.phoneNumber
+            }).populate('account_customer', 'username')
+            if (findBillsByPhoneNumber.length != 0) {
+                return res.status(200).json(findBillsByPhoneNumber)
+            } else {
+                return res.status(200).json({
+                    message: "Username that hasn't purchased from your store"
+                })
+            }
+        } catch (err){
+            return res.send(err.stack);
+        }
     }
 }
 
