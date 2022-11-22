@@ -49,6 +49,8 @@ export class AdminController {
             return res.status(200).json(merchants)
         }
     }
+
+
 }
 
 export default new AdminController()

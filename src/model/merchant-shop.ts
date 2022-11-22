@@ -1,8 +1,10 @@
-import mongoose, {model, Schema} from "mongoose";
+import {model, Schema} from "mongoose";
 import {IAccount} from "./account";
-import slug from "mongoose-slug-updater";
 
-mongoose.plugin(slug)
+enum status {
+    active,
+    inactive
+}
 
 interface IMerchantShop {
     nameShop: string,

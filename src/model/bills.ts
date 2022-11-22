@@ -7,6 +7,7 @@ export interface IBill {
     address: string,
     payment_status: boolean,
     confirm_bill: boolean,
+    phoneNumber: number,
     account_merchant: IAccount
 }
 
@@ -28,6 +29,7 @@ let billSchema = new Schema<IBill>({
         type: Boolean,
         default: false
     },
+    phoneNumber: Number,
     account_merchant: {
         type: Schema.Types.ObjectId,
         ref: 'Account'

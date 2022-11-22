@@ -44,7 +44,14 @@ export class MerChantController {
             message: 'delete done'
         })
     }
-    showMyShop = async (req: Request, res: Response) => {
+    // search = async (req: Request, res: Response) => {
+    //     let searchKey = `/${req.body.searchKey}/`
+    //     console.log(searchKey)
+    //     // let products = await Products.find({name: searchKey})
+    //     let products = await Products.find({name: /pho/})
+    //     return res.status(200).json(products)
+    // }
+    showHome = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
         let infoShop = await MerchantShop.find({account: token.account_id}).populate('account', 'username')
         return res.status(200).json(infoShop)
@@ -94,6 +101,37 @@ export class MerChantController {
         return res.status(200).json(bill)
     }
 
+
+    deleteBill = async (req: Request, res: Response) => {
+        let token = await this.getToken(req)
+        await Bills.deleteOne({_id: req.params.billId, account: token.account_id})
+        return res.status(200).json({
+            message: 'delete done'
+        })
+    };
+    filterStatusBill = async (req: Request, res: Response) => {
+        let token = await this.getToken(req)
+        let bills = await Bills.find({payment_status: token.status}).populate('time')
+        return res.status(200).json(bills)
+    }
+    searchBillByName = async (req: Request , res: Response) => {
+        let searchBillByName = await Bills.find({'name' : new RegExp(req.body.name, 'i')});
+        return res.status(201).json(
+            searchBillByName
+        )
+    }
+    searchBillByPhone = async (req: Request , res: Response) => {
+        let searchBillByPhone = await Bills.find({'phoneNumber' : new RegExp(req.body.phoneNumber, 'i')});
+        return res.status(201).json(
+            searchBillByPhone
+        )
+    }
+    searchBillById = async (req: Request , res: Response) => {
+        let searchBillById = await Bills.find({'_id' : new RegExp(req.body._id, 'i')});
+        return res.status(201).json(
+            searchBillById
+        )
+    }
 }
 
 export default new MerChantController()
