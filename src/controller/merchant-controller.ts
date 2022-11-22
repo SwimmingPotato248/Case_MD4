@@ -110,25 +110,26 @@ export class MerChantController {
         })
     };
     filterStatusBill = async (req: Request, res: Response) => {
-        let token = await this.getToken(req)
-        let bills = await Bills.find({payment_status: token.status}).populate('time')
+        let bills = await Bills.find({payment_status: req.params.payment_status}).populate('time')
         return res.status(200).json(bills)
     }
     searchBillByName = async (req: Request , res: Response) => {
-        let searchBillByName = await Bills.find({'name' : new RegExp(req.body.name, 'i')});
-        return res.status(201).json(
-            searchBillByName
+        let searchUsername = await Account.find({username: req.params.username })
+        console.log(searchUsername)
+        // let searchBillByName = await Bills.find({account_merchant : new RegExp(req.params.username, 'i')});
+        return res.status(200).json(
+            searchUsername
         )
     }
     searchBillByPhone = async (req: Request , res: Response) => {
-        let searchBillByPhone = await Bills.find({'phoneNumber' : new RegExp(req.body.phoneNumber, 'i')});
-        return res.status(201).json(
+        let searchBillByPhone = await Bills.find({phoneNumber : new RegExp(req.params.phoneNumber, 'i')});
+        return res.status(200).json(
             searchBillByPhone
         )
     }
     searchBillById = async (req: Request , res: Response) => {
-        let searchBillById = await Bills.find({'_id' : new RegExp(req.body._id, 'i')});
-        return res.status(201).json(
+        let searchBillById = await Bills.find({_id : req.params.id});
+        return res.status(200).json(
             searchBillById
         )
     }
