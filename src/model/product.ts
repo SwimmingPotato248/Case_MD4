@@ -1,5 +1,8 @@
-import {model, Schema} from "mongoose";
+import mongoose, {model, Schema} from "mongoose";
 import {IAccount} from "./account";
+import slug from "mongoose-slug-updater";
+
+mongoose.plugin(slug)
 
 export interface IProduct {
     name: string;
@@ -9,7 +12,8 @@ export interface IProduct {
     discount?: number;
     status: boolean
     quantitySold: number
-    account: IAccount
+    account: IAccount,
+    slug: String
 }
 
 let productSchema = new Schema<IProduct>({
@@ -26,10 +30,17 @@ let productSchema = new Schema<IProduct>({
         type: Number,
         default: 0
     },
-    account :{
+    account: {
         type: Schema.Types.ObjectId,
         ref: 'Account'
+    },
+    slug: {
+        type: String,
+        slug: "name",
+        unique: true,
+        slugOn: {save: true, update: true, updateOne: true, updateMany: true, findOneAndUpdate: true}
     }
+
 })
 
 export const Products = model<IProduct>('Products', productSchema);

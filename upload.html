@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Testing file upload</title>
+</head>
+
+<body>
+
+<progress value="0" max="100" id="uploader">0%</progress>
+<input type="file" value="upload" accept=".jpg" id="fileButton">
+<h1>Hello GFG</h1>
+<div id="imgDiv"></div>
+<script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyDfApJYqArUdOdt6ejhnryZrPWsg8dPTOA",
+        authDomain: "image-c737d.firebaseapp.com",
+        projectId: "image-c737d",
+        storageBucket: "image-c737d.appspot.com",
+        messagingSenderId: "945971068966",
+        appId: "1:945971068966:web:1634be7b6c53a1caab26e7",
+        measurementId: "G-YJQYC6TQ6S"
+    };
+    firebase.initializeApp(firebaseConfig);
+</script>
+
+<script type="text/javascript">
+    let image = '';
+    let fbBucketName = 'images';
+    let uploader = document.getElementById('uploader');
+    let fileButton = document.getElementById('fileButton');
+
+    fileButton.addEventListener('change', function (e) {
+        console.log('file upload event', e);
+        let file = e.target.files[0];
+        let storageRef = firebase.storage().ref(`${fbBucketName}/${file.name}`);
+        let uploadTask = storageRef.put(file);
+        uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+            function (snapshot) {
+                let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                uploader.value = progress;
+                console.log('Upload is ' + progress + '% done');
+                switch (snapshot.state) {
+                    case firebase.storage.TaskState.PAUSED: // or 'paused'
+                        console.log('Upload is paused');
+                        break;
+                    case firebase.storage.TaskState.RUNNING: // or 'running'
+                        console.log('Upload is running');
+                        break;
+                }
+            }, function (error) {
+                switch (error.code) {
+                    case 'storage/unauthorized':
+                        break;
+
+                    case 'storage/canceled':
+                        break;
+
+                    case 'storage/unknown':
+                        break;
+                }
+            }, function () {
+                let downloadURL = uploadTask.snapshot.downloadURL;
+                localStorage.setItem('image', downloadURL)
+                let url = localStorage.getItem('image')
+                console.log('@@===>', url)
+            });
+
+
+    });
+
+
+</script>
+
+</body>
+
+</html>

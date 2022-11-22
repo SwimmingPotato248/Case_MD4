@@ -5,7 +5,7 @@ import {routerAdmin} from "./router-admin";
 import {routerLogin} from "./router-login";
 
 export const router = Router()
-router.use('/user', routerUser)
+router.use('/', routerUser)
 router.use('/m', routerMerchant)
 router.use('/admin', routerAdmin)
 router.use('/auth', routerLogin)

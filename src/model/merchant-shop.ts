@@ -1,20 +1,31 @@
 import {model, Schema} from "mongoose";
 import {IAccount} from "./account";
 
+enum status {
+    active,
+    inactive
+}
+
 interface IMerchantShop {
     nameShop: string,
-    address : string,
+    address: string,
     information: string
-    account: IAccount
+    account: IAccount,
+    slug: String
 }
 
 let merchantShop = new Schema<IMerchantShop>({
     nameShop: String,
     address: String,
     information: String,
-    account:{
+    account: {
         type: Schema.Types.ObjectId,
         ref: 'Account'
+    },
+    slug: {
+        type: String,
+        slug: "nameShop",
+        slugOn: {save: true, update: true, updateOne: true, updateMany: true, findOneAndUpdate: true}
     }
 })
 
