@@ -1,9 +1,9 @@
-import express, {Request, Response} from "express";
+import express from "express";
 import * as dotenv from "dotenv";
 import mongoose from "mongoose";
 import {router} from "./router/router";
 import cookieParser from 'cookie-parser';
-
+import {Server} from 'socket.io';
 
 dotenv.config();
 mongoose.connect(process.env.DATABASE_URL!, err => {
@@ -19,3 +19,8 @@ app.use('', router)
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });
+
+const io = new Server();
+io.on("connection", () => {
+    console.log("connection")
+})

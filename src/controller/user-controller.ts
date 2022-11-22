@@ -11,9 +11,9 @@ export class UserController {
     }
     registerMerchant = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
-        await Account.updateOne({_id: token.account_id}, {$set: {role: 1}})
+        // await Account.updateOne({_id: token.account_id}, {$set: {role: 1}})
         return res.status(200).json({
-            message: 'Successfully registered as a merchant'
+            tokenUser: token
         })
     }
     showHomePage = async (req: Request, res: Response) => {
@@ -42,7 +42,6 @@ export class UserController {
     }
     detailsProduct = async (req: Request, res: Response) => {
         let products = await Products.find({slug: req.params.productName}).populate('account', 'username')
-        // console.log(products.length)
         if (products.length === 0) {
             return res.status(200).json({
                 message: "Product not found"
@@ -51,17 +50,37 @@ export class UserController {
             return res.status(200).json(products)
         }
     }
-    // searchProduct = async (req: Request, res: Response) => {
-    //     console.log(req.body.keyWord)
-    //     let products = await Products.find({slug:req.body.keyWord})
-    //     console.log("product", products)
-    //     return res.status(200).json(products)
-    // }
-
-    payment = async (req: Request, res: Response) => {
-
+    searchProduct = async (req: Request, res: Response) => {
+        let products = await Products.find({slug: new RegExp(req.body.keyWord, 'i')})
+        return res.status(200).json(products)
+    }
+    showMyBills = async (req: Request, res: Response) => {
+        let token = await this.getToken(req)
+        let listBills = await Bills.find({account_customer: token.account_id, payment_status: true})
+        return res.status(200).json(listBills)
+    }
+    billDetails = async (req: Request, res: Response) => {
+        let billDetails = await Details.find({bills: req.params.billId})
+        return res.status(200).json(billDetails)
     }
 
+    // payment = async (req: Request, res: Response) => {
+    //     let token = await this.getToken(req)
+    //     let listProducts = req.body
+    //     let day = new Date()
+    //     let today = day.getFullYear() + '-' + (day.getMonth() + 1) + '-' + day.getDate()
+    //     let billData = {
+    //         time: today,
+    //         account_customer: token.account_id,
+    //         address: req.body.address,
+    //         account_merchant: req.body.account_merchant
+    //     }
+    //     let bill = await Bills.create(billData)
+    //     let bill_id = bill[0]._id
+    //     return res.status(200).json({
+    //         message: "dang fix"
+    //     })
+    // }
 }
 
 export default new UserController()

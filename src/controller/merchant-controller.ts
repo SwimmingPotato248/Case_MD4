@@ -44,13 +44,6 @@ export class MerChantController {
             message: 'delete done'
         })
     }
-    // search = async (req: Request, res: Response) => {
-    //     let searchKey = `/${req.body.searchKey}/`
-    //     console.log(searchKey)
-    //     // let products = await Products.find({name: searchKey})
-    //     let products = await Products.find({name: /pho/})
-    //     return res.status(200).json(products)
-    // }
     showMyShop = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
         let infoShop = await MerchantShop.find({account: token.account_id}).populate('account', 'username')
@@ -89,7 +82,7 @@ export class MerChantController {
 
     showBills = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
-        let bills = await Bills.find({account_merchant: token.account_id}).populate('bills', 'username')
+        let bills = await Bills.find({account_merchant: token.account_id}).populate('account_merchant', 'username')
         return res.status(200).json(bills)
     }
     showBillDetails = async (req: Request, res: Response) => {

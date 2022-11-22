@@ -32,23 +32,29 @@ export class LoginController {
             })
         } else {
             let comparePassword = await bcrypt.compare(account.password, findAccount.password)
-            if (!comparePassword) {
-                return res.status(200).json({
-                    message: "Password is wrong"
-                })
-            } else {
-                let payload = {
-                    account_id: findAccount._id,
-                    username: findAccount.username,
-                    status: findAccount.status,
-                    role: findAccount.role
+            let findAccountStatus = await Account.find({username: account.username, status: true})
+            if (findAccountStatus.length === 1) {
+                if (comparePassword) {
+                    let payload = {
+                        account_id: findAccount._id,
+                        username: findAccount.username,
+                        status: findAccount.status,
+                        role: findAccount.role
+                    }
+                    let token = jwt.sign(payload, SECRET, {
+                        expiresIn: 7 * 24 * 60 * 60 * 1000
+                    })
+                    return res.status(200).json({
+                        token: token
+                    })
+                } else {
+                    return res.status(200).json({
+                        message: "Password is wrong"
+                    })
                 }
-
-                let token = jwt.sign(payload, SECRET, {
-                    expiresIn: 7 * 24 * 60 * 60 * 1000
-                })
+            } else {
                 return res.status(200).json({
-                    token: token
+                    message: "Account has been locked"
                 })
             }
         }
