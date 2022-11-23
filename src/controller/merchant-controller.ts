@@ -12,17 +12,18 @@ export class MerChantController {
     showProducts = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
         let products = await Products.find({account: token.account_id}).populate('account', 'username')
-        return res.status(200).json(products)
+        return res.status(200).json({products, status: true})
     }
     createProduct = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
         let listProduct = req.body
-        for (let i = 0; i< listProduct.products.length; i++){
+        for (let i = 0; i < listProduct.products.length; i++) {
             listProduct.products[i].account = token.account_id
             await Products.create(listProduct.products[i])
         }
         return res.status(201).json({
-            message: "Create new product done"
+            message: "Create new product done",
+            status: true
         })
 
     }
@@ -32,11 +33,13 @@ export class MerChantController {
         if (product.length) {
             await Products.updateOne({slug: req.params.productName}, req.body)
             return res.status(200).json({
-                message: 'Update product done'
+                message: 'Update product done',
+                status: true
             })
         } else {
             return res.status(200).json({
-                message: "Product not found"
+                message: "Product not found",
+                status: false
             })
         }
     }
@@ -44,27 +47,30 @@ export class MerChantController {
         let token = await this.getToken(req)
         await Products.deleteOne({slug: req.params.productName, account: token.account_id})
         return res.status(200).json({
-            message: 'delete done'
+            message: 'delete done',
+            status: true
         })
     }
     showMyShop = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
         let infoShop = await MerchantShop.find({account: token.account_id}).populate('account', 'username')
-        return res.status(200).json(infoShop)
+        return res.status(200).json({infoShop, status: true})
     }
     createShop = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
         let shops = await MerchantShop.find({account: token.account_id})
         if (shops.length) {
             return res.status(200).json({
-                message: "You already have a store so you can't create more"
+                message: "You already have a store so you can't create more",
+                status: false
             })
         } else {
             let infoShop = req.body
             infoShop.account = token.account_id
             await MerchantShop.create(infoShop)
             return res.status(201).json({
-                message: "Create new Shop done"
+                message: "Create new Shop done",
+                status: true
             })
         }
     }
@@ -74,11 +80,13 @@ export class MerChantController {
         if (merchantShops.length) {
             await MerchantShop.updateOne({slug: req.params.nameShop, account: token.account_id}, req.body)
             return res.status(200).json({
-                message: 'update info shop done'
+                message: 'update info shop done',
+                status: true
             })
         } else {
             return res.status(200).json({
-                message: 'Shop not found'
+                message: 'Shop not found',
+                status: false
             })
         }
     }
@@ -86,7 +94,7 @@ export class MerChantController {
     showBills = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
         let bills = await Bills.find({account_merchant: token.account_id}).populate('account_merchant', 'username')
-        return res.status(200).json(bills)
+        return res.status(200).json({bills, status: true})
     }
     showBillDetails = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
@@ -94,28 +102,30 @@ export class MerChantController {
             account_merchant: token.account_id,
             account_customer: req.params.billId
         }).populate('bills', 'username')
-        return res.status(200).json(bill)
+        return res.status(200).json({bill, status: true})
     }
 
     deleteBill = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
         await Bills.deleteOne({_id: req.params.billId, account: token.account_id})
         return res.status(200).json({
-            message: 'delete done'
+            message: 'delete done',
+            status: true
         })
     };
     filterStatusBill = async (req: Request, res: Response) => {
         let bills = await Bills.find({payment_status: req.params.payment_status}).populate('time')
-        return res.status(200).json(bills)
+        return res.status(200).json({bills, status: true})
     }
     searchBillById = async (req: Request, res: Response) => {
         try {
             let findBillsById = await Bills.find({_id: req.body.billId});
             if (findBillsById.length != 0) {
-                return res.status(200).json(findBillsById)
+                return res.status(200).json({findBillsById, status: true})
             } else {
                 return res.status(200).json({
-                    message: "Id not found"
+                    message: "Id not found",
+                    status: false
                 })
             }
         } catch (err) {
@@ -131,15 +141,17 @@ export class MerChantController {
                 account_customer: findUsername[0]._id
             }).populate('account_customer', 'username')
             if (findBillsByUsername.length != 0) {
-                return res.status(200).json(findBillsByUsername)
+                return res.status(200).json({findBillsByUsername, status: true})
             } else {
                 return res.status(200).json({
-                    message: "Username that hasn't purchased from your store"
+                    message: "Username that hasn't purchased from your store",
+                    status: false
                 })
             }
         } else {
             return res.status(200).json({
-                message: "Username does not exist"
+                message: "Username does not exist",
+                status: false
             })
         }
     }
@@ -151,10 +163,11 @@ export class MerChantController {
                 phoneNumber: req.body.phoneNumber
             }).populate('account_customer', 'username')
             if (findBillsByPhoneNumber.length != 0) {
-                return res.status(200).json(findBillsByPhoneNumber)
+                return res.status(200).json({findBillsByPhoneNumber, status: true})
             } else {
                 return res.status(200).json({
-                    message: "Username that hasn't purchased from your store"
+                    message: "Username that hasn't purchased from your store",
+                    status: false
                 })
             }
         } catch (err) {

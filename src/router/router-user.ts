@@ -12,4 +12,6 @@ routerUser.use(auth);
 routerUser.post('/u/merchant/register', userController.registerMerchant)
 routerUser.get('/u/mybills', userController.showMyBills)
 routerUser.get('/u/mybills/:billId', userController.billDetails)
-// routerUser.post('/u/payment', userController.payment)
+routerUser.post('/u/confirm', userController.confirmBills)
+routerUser.post('/u/payment', userController.payment)
+routerUser.post('/u/rejectBill', userController.rejectBill)

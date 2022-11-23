@@ -12,13 +12,15 @@ export class LoginController {
         })
         if (findAccount) {
             return res.status(203).json({
-                message: "Account already exists"
+                message: "Account already exists",
+                status: false
             })
         } else {
             account.password = await bcrypt.hash(account.password, 10)
             await Account.create(account)
             return res.status(201).json({
-                message: "Register done"
+                message: "Register done",
+                status: true
             })
         }
 
@@ -30,7 +32,8 @@ export class LoginController {
         })
         if (!findAccount) {
             return res.status(203).json({
-                message: "Account is not defined"
+                message: "Account is not defined",
+                status: false
             })
         } else {
             let comparePassword = await bcrypt.compare(account.password, findAccount.password)
@@ -48,16 +51,19 @@ export class LoginController {
                     })
                     return res.status(200).json({
                         token: token,
-                        account_id: findAccount._id
+                        account_id: findAccount._id,
+                        status: true
                     })
                 } else {
                     return res.status(200).json({
-                        message: "Password is wrong"
+                        message: "Password is wrong",
+                        status: false
                     })
                 }
             } else {
                 return res.status(200).json({
-                    message: "Account has been locked"
+                    message: "Account has been locked",
+                    status: false
                 })
             }
         }
