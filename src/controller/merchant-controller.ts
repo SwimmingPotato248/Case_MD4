@@ -17,12 +17,14 @@ export class MerChantController {
     createProduct = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
         let listProduct = req.body
-        for (let i = 0; i < listProduct.products.length; i++) {
-            await Products.create(listProduct.product[i])
+        for (let i = 0; i< listProduct.products.length; i++){
+            listProduct.products[i].account = token.account_id
+            await Products.create(listProduct.products[i])
         }
         return res.status(201).json({
             message: "Create new product done"
         })
+
     }
     updateProduct = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
