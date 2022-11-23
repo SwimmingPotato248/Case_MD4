@@ -1,6 +1,7 @@
 import {Request, Response} from "express";
 import {Account} from "../model/account";
 import {MerchantShop} from "../model/merchant-shop";
+import {Products} from "../model/product";
 
 
 export class AdminController {
@@ -50,7 +51,33 @@ export class AdminController {
         }
     }
 
+    showListUser = async (req: Request, res: Response) => {
+        let users = await Account.find({role: 0})
+        let listUser = []
+        users.forEach(item => {
+            let user = {
+                id: item._id,
+                username: item.username,
+                status: item.status,
+                role: item.role
+            }
+            listUser.push(user)
+        })
+        return res.status(200).json(listUser)
+    }
 
+    quickSearchProduct = async (req: Request, res: Response) => {
+        let products = await Products.find({slug: new RegExp(req.body.keyWord, 'i')})
+        if (products.length != 0) {
+            return res.status(200).json(products)
+        } else {
+            return res.status(200).json({
+                message: "Product not found"
+            })
+        }
+    }
+
+    showFamousProduct
 }
 
 export default new AdminController()

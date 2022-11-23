@@ -12,6 +12,7 @@ routerMerchant.get('/shops/info', merchantController.showMyShop)
 routerMerchant.post('/create/shops', merchantController.createShop)
 routerMerchant.post('/update/shops/:nameShop', merchantController.updateShop)
 routerMerchant.get('/bills', merchantController.showBills)
+
 // routerMerchant.get('/bills/:billId', merchantController.showBillDetails)
 routerMerchant.post('/delete/:billId', merchantController.deleteBill)
 routerMerchant.get('/bills/status/:payment_status', merchantController.filterStatusBill)

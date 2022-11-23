@@ -141,7 +141,7 @@ export class MerChantController {
         }
     }
     searchBillByPhone = async (req: Request, res: Response) => {
-        try{
+        try {
             let token = await this.getToken(req)
             let findBillsByPhoneNumber = await Bills.find({
                 account_merchant: token.account_id,
@@ -154,10 +154,19 @@ export class MerChantController {
                     message: "Username that hasn't purchased from your store"
                 })
             }
-        } catch (err){
+        } catch (err) {
             return res.send(err.stack);
         }
     }
+
+    // showBillOfUser = async (req: Request, res: Response) => {
+    //     let token = await this.getToken(req)
+    //     let showBillByUsername = await Bills.find({
+    //         account_merchant: token.account_id
+    //     }).populate('account_customer', 'username')
+    // }
+
+
 }
 
 export default new MerChantController()
