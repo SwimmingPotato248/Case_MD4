@@ -93,8 +93,19 @@ export class MerChantController {
 
     showBills = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
-        let bills = await Bills.find({account_merchant: token.account_id}).populate('account_merchant', 'username')
-        return res.status(200).json({bills, status: true})
+        let bills = await Bills.find({account_merchant: token.account_id, confirm_bill: false, payment_status: false})
+        return res.status(200).json({
+            bills,
+            status: true
+        })
+    }
+    acceptBill = async (req: Request, res: Response) => {
+        let token = await this.getToken(req)
+        await Bills.updateMany({_id: req.body.billId, account_merchant: token.account_id}, {confirm_bill: true})
+        return res.status(200).json({
+            message: "Accept done",
+            status: true
+        })
     }
     showBillDetails = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
@@ -174,6 +185,10 @@ export class MerChantController {
             return res.send(err.stack);
         }
     }
+    getBill = async (req: Request, res: Response) => {
+
+    }
+
 }
 
 export default new MerChantController()
