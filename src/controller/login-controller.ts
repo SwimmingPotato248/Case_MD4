@@ -16,8 +16,10 @@ export class LoginController {
             })
         } else {
             account.password = await bcrypt.hash(account.password, 10)
-            account = await Account.create(account)
-            return res.status(201).json(account)
+            await Account.create(account)
+            return res.status(201).json({
+                message: "Register done"
+            })
         }
 
     }
@@ -45,7 +47,8 @@ export class LoginController {
                         expiresIn: 7 * 24 * 60 * 60 * 1000
                     })
                     return res.status(200).json({
-                        token: token
+                        token: token,
+                        account_id: findAccount._id
                     })
                 } else {
                     return res.status(200).json({
