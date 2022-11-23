@@ -20,4 +20,8 @@ routerMerchant.post('/search/id', merchantController.searchBillById)
 routerMerchant.post('/search/name', merchantController.searchBillByName)
 routerMerchant.post('/search/phone', merchantController.searchBillByPhone)
 
+// routerMerchant.post('/search/phone', merchantController.)
+
+
+
 
