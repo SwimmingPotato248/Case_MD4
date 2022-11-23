@@ -15,10 +15,11 @@ export class MerChantController {
         return res.status(200).json(products)
     }
     createProduct = async (req: Request, res: Response) => {
-        let product = req.body
         let token = await this.getToken(req)
-        product.account = token.account_id
-        await Products.create(product)
+        let listProduct = req.body
+        for (let i = 0; i < listProduct.products.length; i++) {
+            await Products.create(listProduct.product[i])
+        }
         return res.status(201).json({
             message: "Create new product done"
         })
@@ -141,7 +142,7 @@ export class MerChantController {
         }
     }
     searchBillByPhone = async (req: Request, res: Response) => {
-        try{
+        try {
             let token = await this.getToken(req)
             let findBillsByPhoneNumber = await Bills.find({
                 account_merchant: token.account_id,
@@ -154,7 +155,7 @@ export class MerChantController {
                     message: "Username that hasn't purchased from your store"
                 })
             }
-        } catch (err){
+        } catch (err) {
             return res.send(err.stack);
         }
     }
