@@ -12,12 +12,16 @@ routerMerchant.get('/shops/info', merchantController.showMyShop)
 routerMerchant.post('/create/shops', merchantController.createShop)
 routerMerchant.post('/update/shops/:nameShop', merchantController.updateShop)
 routerMerchant.get('/bills', merchantController.showBills)
+routerMerchant.post('/bills', merchantController.acceptBill)
 // routerMerchant.get('/bills/:billId', merchantController.showBillDetails)
 routerMerchant.post('/delete/:billId', merchantController.deleteBill)
 routerMerchant.get('/bills/status/:payment_status', merchantController.filterStatusBill)
 routerMerchant.post('/search/id', merchantController.searchBillById)
 routerMerchant.post('/search/name', merchantController.searchBillByName)
 routerMerchant.post('/search/phone', merchantController.searchBillByPhone)
+
+// routerMerchant.post('/search/phone', merchantController.)
+
 
 
 

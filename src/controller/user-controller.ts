@@ -10,6 +10,11 @@ export class UserController {
     getToken = async (req: any) => {
         return req.decode
     }
+    getTime = () => {
+        let day = new Date()
+        let today = day.getFullYear() + '-' + (day.getMonth() + 1) + '-' + day.getDate()
+        return today
+    }
     registerMerchant = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
         // await Account.updateOne({_id: token.account_id}, {$set: {role: 1}})
@@ -55,7 +60,13 @@ export class UserController {
         }
     }
     searchProduct = async (req: Request, res: Response) => {
-        let products = await Products.find({slug: new RegExp(req.body.keyWord, 'i')})
+        // let products = await Products.find({slug: new RegExp(req.body.keyWord, 'i')})
+        let products = await Products.find({
+            $or: [
+                {slug: new RegExp(req.body.keyWord, 'i')},
+                {name: new RegExp(req.body.keyWord, 'i')}
+            ]
+        })
         if (products.length != 0) {
             return res.status(200).json({products, status: true})
         } else {
@@ -96,8 +107,7 @@ export class UserController {
     confirmBills = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
         let data = req.body
-        let day = new Date()
-        let today = day.getFullYear() + '-' + (day.getMonth() + 1) + '-' + day.getDate()
+        let today = this.getTime()
         let billData = {
             time: today,
             account_customer: token.account_id,
@@ -126,7 +136,8 @@ export class UserController {
         let confirm_bill = await Bills.find({_id: req.body.billId, account_customer: token.account_id})
         let billDetails = await Details.find({bills: confirm_bill[0]._id})
         if (confirm_bill[0].confirm_bill === true && confirm_bill[0].payment_status === false) {
-            await Bills.updateOne({_id: req.body.billId}, {payment_status: true})
+            let today = this.getTime()
+            await Bills.updateOne({_id: req.body.billId}, {payment_status: true, time: today})
             for (let i = 0; i < billDetails.length; i++) {
                 let products = await Products.find({_id: billDetails[i].product})
                 let quantitySold = products[0].quantitySold + billDetails[i].quantity

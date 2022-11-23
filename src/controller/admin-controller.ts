@@ -30,23 +30,41 @@ export class AdminController {
     // }
 
     changeStatusMerchant = async (req: Request, res: Response) => {
-        let merchants = await Account.find({username: req.params.username, role: 1})
-        if (merchants[0].status === true) {
-            merchants[0].status = false
-            await Account.updateOne(
-                {username: req.params.username},
-                {
-                    $set: {status: false}
+        try{
+            let account = await Account.find({username: req.body.username})
+            if (account.length != 0) {
+                if (account[0].username === 'admin') {
+                    return res.status(200).json({
+                        message: "You don't have admin lock permission",
+                        status: false
+                    })
+                } else {
+                    if (account[0].status === true) {
+                        account[0].status = false
+                        await Account.updateOne(
+                            {username: req.body.username},
+                            {
+                                $set: {status: false}
+                            })
+                        return res.status(200).json({account, status: true})
+                    } else {
+                        account[0].status = true
+                        await Account.updateOne(
+                            {username: req.body.username},
+                            {
+                                $set: {status: true}
+                            })
+                        return res.status(200).json({account, status: true})
+                    }
+                }
+            } else {
+                return res.status(200).json({
+                    message: "Username not found",
+                    status: false
                 })
-            return res.status(200).json(merchants)
-        } else {
-            merchants[0].status = true
-            await Account.updateOne(
-                {username: req.params.username},
-                {
-                    $set: {status: true}
-                })
-            return res.status(200).json(merchants)
+            }
+        } catch (err) {
+            return res.send(err.stack);
         }
     }
 
