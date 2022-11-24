@@ -52,6 +52,7 @@ export class LoginController {
                     return res.status(200).json({
                         token: token,
                         account_id: findAccount._id,
+                        role: findAccount.role,
                         status: true
                     })
                 } else {
