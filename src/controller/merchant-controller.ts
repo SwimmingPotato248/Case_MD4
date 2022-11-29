@@ -3,6 +3,7 @@ import {Products} from "../model/product";
 import {Account} from "../model/account";
 import {MerchantShop} from "../model/merchant-shop";
 import {Bills} from "../model/bills";
+import {Details} from "../model/bills-details";
 
 export class MerChantController {
     getToken = async (req: any) => {
@@ -110,15 +111,20 @@ export class MerChantController {
     }
     showBillDetails = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
-        let bill = await Bills.find({
-            account_merchant: token.account_id,
-            account_customer: req.params.billId
-        }).populate('bills', 'username')
-        return res.status(200).json({bill, status: true})
+        let billsDetails = await Details.find({
+            bills: req.params.billId
+        }).populate('product')
+        return res.status(200).json({Details: billsDetails, status: true})
     }
 
     deleteBill = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
+        let listDetails = await Details.find({
+            bills: req.params.billId
+        })
+        for (let i = 0; i < listDetails.length; i++) {
+            await Details.deleteOne(listDetails[i]._id)
+        }
         await Bills.deleteOne({_id: req.params.billId, account: token.account_id})
         return res.status(200).json({
             message: 'delete done',
