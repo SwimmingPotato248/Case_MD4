@@ -4,6 +4,7 @@ import {IProduct, Products} from "../model/product";
 import {MerchantShop} from "../model/merchant-shop";
 import {Bills, IBill} from "../model/bills";
 import {Details} from "../model/bills-details";
+import {Notice} from "../model/notice";
 
 
 export class UserController {
@@ -15,14 +16,32 @@ export class UserController {
         let today = day.getFullYear() + '-' + (day.getMonth() + 1) + '-' + day.getDate()
         return today
     }
-    registerMerchant = async (req: Request, res: Response) => {
+    submitToMerchant = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
+        let userId = req.body.userId
         // await Account.updateOne({_id: token.account_id}, {$set: {role: 1}})
+        let newNotice = {
+            user_id: userId
+        }
+        await Notice.create(newNotice)
         return res.status(200).json({
-            tokenUser: token,
+            userId: userId,
+            message: 'Wait for admin to confirm',
             status: true
         })
     }
+    showNotice = async (req: Request, res: Response) => {
+        let token = await this.getToken(req)
+        let listNotice = await Notice.find({user_id: token.account_id})
+        let notice = await  Notice.find({user_id: token.account_id, status: false})
+        return res.status(200).json({
+            listNotice,
+            notice,
+            message: 'The account has been denied',
+            status: true
+        })
+    }
+
     showHomePage = async (req: Request, res: Response) => {
         let products = await Products.find().populate('account', 'username')
         return res.status(200).json({products, status: true})
@@ -91,7 +110,7 @@ export class UserController {
     }
     billDetails = async (req: Request, res: Response) => {
         try {
-            let billDetails = await Details.find({bills: req.params.billId}).populate('product', 'name')
+            let billDetails = await Details.find({bills: req.params.billId}).populate('product')
             if (billDetails.length != 0) {
                 return res.status(200).json({billDetails, status: true})
             } else {
@@ -132,34 +151,34 @@ export class UserController {
             status: true
         })
     }
-    payment = async (req: Request, res: Response) => {
-        let token = await this.getToken(req)
-        let confirm_bill = await Bills.find({_id: req.body.billId, account_customer: token.account_id})
-        let billDetails = await Details.find({bills: confirm_bill[0]._id})
-        if (confirm_bill[0].confirm_bill === true && confirm_bill[0].payment_status === false) {
-            let today = this.getTime()
-            await Bills.updateOne({_id: req.body.billId}, {payment_status: true, time: today})
-            for (let i = 0; i < billDetails.length; i++) {
-                let products = await Products.find({_id: billDetails[i].product})
-                let quantitySold = products[0].quantitySold + billDetails[i].quantity
-                await Products.updateOne({_id: billDetails[i].product}, {quantitySold: quantitySold})
-            }
-            return res.status(200).json({
-                message: "Payment success",
-                status: true
-            })
-        } else if (confirm_bill[0].confirm_bill === true && confirm_bill[0].payment_status === true) {
-            return res.status(200).json({
-                message: "You paid for this order",
-                status: false
-            })
-        } else {
-            return res.status(200).json({
-                message: "Waiting for merchant to confirm",
-                status: false
-            })
-        }
-    }
+    // payment = async (req: Request, res: Response) => {
+    //     let token = await this.getToken(req)
+    //     let confirm_bill = await Bills.find({_id: req.body.billId, account_customer: token.account_id})
+    //     let billDetails = await Details.find({bills: confirm_bill[0]._id})
+    //     if (confirm_bill[0].confirm_bill === true && confirm_bill[0].payment_status === false) {
+    //         let today = this.getTime()
+    //         await Bills.updateOne({_id: req.body.billId}, {payment_status: true, time: today})
+    //         for (let i = 0; i < billDetails.length; i++) {
+    //             let products = await Products.find({_id: billDetails[i].product})
+    //             let quantitySold = products[0].quantitySold + billDetails[i].quantity
+    //             await Products.updateOne({_id: billDetails[i].product}, {quantitySold: quantitySold})
+    //         }
+    //         return res.status(200).json({
+    //             message: "Payment success",
+    //             status: true
+    //         })
+    //     } else if (confirm_bill[0].confirm_bill === true && confirm_bill[0].payment_status === true) {
+    //         return res.status(200).json({
+    //             message: "You paid for this order",
+    //             status: false
+    //         })
+    //     } else {
+    //         return res.status(200).json({
+    //             message: "Waiting for merchant to confirm",
+    //             status: false
+    //         })
+    //     }
+    // }
     rejectBill = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
         await Details.deleteMany({bills: req.body.billId})

@@ -9,6 +9,11 @@ export class MerChantController {
     getToken = async (req: any) => {
         return req.decode
     }
+    getTime = () => {
+        let day = new Date()
+        let today = day.getFullYear() + '-' + (day.getMonth() + 1) + '-' + day.getDate()
+        return today
+    }
 
     showProducts = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
@@ -103,7 +108,20 @@ export class MerChantController {
     }
     acceptBill = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
-        await Bills.updateMany({_id: req.body.billId, account_merchant: token.account_id}, {confirm_bill: true})
+        await Bills.updateMany({_id: req.body.billId, account_merchant: token.account_id}, {
+            confirm_bill: true,
+            payment_status: true
+        })
+        let billDetails = await Details.find({bills: req.body.billId})
+
+        let today = this.getTime()
+        await Bills.updateOne({_id: req.body.billId}, {payment_status: true, time: today})
+        for (let i = 0; i < billDetails.length; i++) {
+            let products = await Products.find({_id: billDetails[i].product})
+            let quantitySold = products[0].quantitySold + billDetails[i].quantity
+            await Products.updateOne({_id: billDetails[i].product}, {quantitySold: quantitySold})
+        }
+
         return res.status(200).json({
             message: "Accept done",
             status: true

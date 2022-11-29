@@ -1,6 +1,7 @@
 import {Request, Response} from "express";
 import {Account} from "../model/account";
 import {MerchantShop} from "../model/merchant-shop";
+import {Notice} from "../model/notice";
 
 
 export class AdminController {
@@ -22,6 +23,21 @@ export class AdminController {
         return res.status(200).json(listMerchant)
     }
 
+    showUsers = async (req: Request, res: Response) => {
+        let users = await Account.find({role: 0})
+        let listUser = []
+        users.forEach(item => {
+            let user = {
+                id: item._id,
+                username: item.username,
+                status: item.status,
+                role: item.role
+            }
+            listUser.push(user)
+        })
+        return res.status(200).json(listUser)
+    }
+
     // merchantDetail = async (req: Request, res: Response) => {
     //     console.log(req.params.username)
     //     let merchant = await MerchantShop.findOne({
@@ -29,8 +45,8 @@ export class AdminController {
     //     return res.status(200).json(merchant)
     // }
 
-    changeStatusMerchant = async (req: Request, res: Response) => {
-        try{
+    changeStatusMember = async (req: Request, res: Response) => {
+        try {
             let account = await Account.find({username: req.body.username})
             if (account.length != 0) {
                 if (account[0].username === 'admin') {
@@ -46,7 +62,11 @@ export class AdminController {
                             {
                                 $set: {status: false}
                             })
-                        return res.status(200).json({account, status: true})
+                        return res.status(200).json({
+                            account,
+                            message: "Lock users done",
+                            status: true
+                        })
                     } else {
                         account[0].status = true
                         await Account.updateOne(
@@ -54,7 +74,11 @@ export class AdminController {
                             {
                                 $set: {status: true}
                             })
-                        return res.status(200).json({account, status: true})
+                        return res.status(200).json({
+                            account,
+                            message: "Unlock users done",
+                            status: true
+                        })
                     }
                 }
             } else {
@@ -66,6 +90,33 @@ export class AdminController {
         } catch (err) {
             return res.send(err.stack);
         }
+    }
+
+    notice = async (req: Request, res: Response) => {
+        let notice = await Notice.find({status: true})
+        return res.status(200).json({
+            notice,
+            status: true
+        })
+    }
+
+    acceptUpgrade = async (req: Request, res: Response) => {
+        let userId = req.params.userId
+        await Account.updateOne({_id: userId}, {$set: {role: 1}})
+        await Notice.updateOne({user_id: userId}, {$set: {status: false}})
+        return res.status(200).json({
+            message: "Upgrade done",
+            status: true
+        })
+    }
+
+    rejectUpgrade = async (req: Request, res: Response) => {
+        let userId = req.params.userId
+        await Notice.updateOne({user_id: userId}, {$set: {status: false}})
+        return res.status(200).json({
+            message: "Reject done",
+            status: true
+        })
     }
 
 

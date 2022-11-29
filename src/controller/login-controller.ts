@@ -57,7 +57,7 @@ export class LoginController {
                     })
                 } else {
                     return res.status(200).json({
-                        message: "Password is wrong",
+                        message: "Wrong password",
                         status: false
                     })
                 }
