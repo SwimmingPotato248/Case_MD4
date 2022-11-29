@@ -50,6 +50,7 @@ export class UserController {
     }
     detailsProduct = async (req: Request, res: Response) => {
         let products = await Products.find({slug: req.params.productName}).populate('account', 'username')
+        // let products = await Products.find({_id: req.params.productName}).populate('account', 'username')
         if (products.length != 0) {
             return res.status(200).json({products, status: true})
         } else {
@@ -78,7 +79,7 @@ export class UserController {
     }
     showMyBills = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
-        let bills = await Bills.find({account_customer: token.account_id, payment_status: true})
+        let bills = await Bills.find({account_customer: token.account_id})
         if (bills.length != 0) {
             return res.status(200).json({bills, status: true})
         } else {
@@ -90,7 +91,7 @@ export class UserController {
     }
     billDetails = async (req: Request, res: Response) => {
         try {
-            let billDetails = await Details.find({bills: req.params.billId})
+            let billDetails = await Details.find({bills: req.params.billId}).populate('product', 'name')
             if (billDetails.length != 0) {
                 return res.status(200).json({billDetails, status: true})
             } else {

@@ -54,7 +54,8 @@ export class MerChantController {
     showMyShop = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
         let infoShop = await MerchantShop.find({account: token.account_id}).populate('account', 'username')
-        return res.status(200).json({infoShop, status: true})
+        let products = await Products.find({account: token.account_id})
+        return res.status(200).json({infoShop, products, status: true})
     }
     createShop = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
@@ -80,7 +81,7 @@ export class MerChantController {
         if (merchantShops.length) {
             await MerchantShop.updateOne({slug: req.params.nameShop, account: token.account_id}, req.body)
             return res.status(200).json({
-                message: 'update info shop done',
+                message: 'Update done',
                 status: true
             })
         } else {
@@ -93,7 +94,7 @@ export class MerChantController {
 
     showBills = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
-        let bills = await Bills.find({account_merchant: token.account_id, confirm_bill: false, payment_status: false})
+        let bills = await Bills.find({account_merchant: token.account_id}).sort({'time': -1})
         return res.status(200).json({
             bills,
             status: true
