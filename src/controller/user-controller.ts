@@ -5,6 +5,8 @@ import {MerchantShop} from "../model/merchant-shop";
 import {Bills, IBill} from "../model/bills";
 import {Details} from "../model/bills-details";
 import {Notice} from "../model/notice";
+import {Category} from "../model/category";
+import {CategoryProduct} from "../model/category-products";
 
 
 export class UserController {
@@ -33,7 +35,7 @@ export class UserController {
     showNotice = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
         let listNotice = await Notice.find({user_id: token.account_id})
-        let notice = await  Notice.find({user_id: token.account_id, status: false})
+        let notice = await Notice.find({user_id: token.account_id, status: false})
         return res.status(200).json({
             listNotice,
             notice,
@@ -96,6 +98,40 @@ export class UserController {
             })
         }
     }
+    createCategory = async (req: Request, res: Response) => {
+        let category = {
+            category_name: req.body.name
+        }
+        await Category.create(category)
+        return res.status(201).json({
+            message: "Create done",
+            status: true
+        })
+    }
+    getCategory = async (req: Request, res: Response) => {
+        let category = await Category.find()
+        return res.status(200).json(category)
+    }
+    getCategoryProducts = async (req: Request, res: Response) => {
+        let category = await CategoryProduct.find().populate('product_id')
+        return res.status(200).json(category)
+    }
+    CategoryProducts = async (req: Request, res: Response) => {
+        let category = {
+            category_id: req.body.categoryId,
+            product_id: req.body.productId
+        }
+        await CategoryProduct.create(category)
+        return res.status(201).json({
+            message: "Create done",
+            status: true
+        })
+    }
+    findByCategory = async (req: Request, res: Response) => {
+        let products = await CategoryProduct.find({category_id: req.params.categoryId}).populate('product_id')
+        return res.status(200).json(products)
+    }
+
     showMyBills = async (req: Request, res: Response) => {
         let token = await this.getToken(req)
         let bills = await Bills.find({account_customer: token.account_id})
