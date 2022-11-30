@@ -53,20 +53,24 @@ export class UserController {
         return res.status(200).json({shops, status: true})
     }
     detailsShop = async (req: Request, res: Response) => {
-        let shops = await MerchantShop.find({slug: req.params.nameShop}).populate('account', 'username')
-        if (shops.length != 0) {
-            let account = await Account.find({username: shops[0].account.username})
-            let products = await Products.find({account: account[0]._id}).populate('account', 'username')
-            let details = {
-                shop: shops,
-                products: products
+        try{
+            let shops = await MerchantShop.find({slug: req.params.nameShop}).populate('account', 'username')
+            if (shops.length != 0) {
+                let account = await Account.find({username: shops[0].account.username})
+                let products = await Products.find({account: account[0]._id}).populate('account', 'username')
+                let details = {
+                    shop: shops,
+                    products: products
+                }
+                return res.status(200).json({details, status: true})
+            } else {
+                return res.status(200).json({
+                    message: "Store not found",
+                    status: false
+                })
             }
-            return res.status(200).json({details, status: true})
-        } else {
-            return res.status(200).json({
-                message: "Store not found",
-                status: false
-            })
+        }catch (err) {
+            return res.send(err.stack);
         }
     }
     detailsProduct = async (req: Request, res: Response) => {

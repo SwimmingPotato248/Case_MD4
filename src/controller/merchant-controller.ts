@@ -214,6 +214,44 @@ export class MerChantController {
 
     }
 
+    getRevenueToday = async (req: Request, res: Response) => {
+        let token = await this.getToken(req)
+        let bills = await Bills.find({
+            account_merchant: token.account_id,
+            confirm_bill: true,
+            time: {
+                $gte: this.getTime(),
+                $lte: this.getTime()
+            }
+        })
+        return res.status(200).json(bills)
+    }
+
+    getRevenue = async (req: Request, res: Response) => {
+        let token = await this.getToken(req)
+        let bills = await Bills.find({
+            account_merchant: token.account_id,
+            confirm_bill: true,
+            time: {
+                $gte: req.body.time1,
+                $lte: req.body.time2
+            }
+        }).sort({time: -1})
+        let sum = 0
+        let countBills = bills.length
+        for (let i = 0; i < bills.length; i++) {
+            let details = await Details.find({bills: bills[i]._id}).populate('product')
+            // console.log()
+            for (let j = 0; j < details.length; j++) {
+                sum += details[j].quantity * details[j].product.price
+            }
+        }
+        return res.status(200).json({
+            count: countBills,
+            total: sum,
+        })
+    }
+
 }
 
 export default new MerChantController()
