@@ -11,3 +11,6 @@ routerAdmin.post('/status', adminController.changeStatusMember)
 routerAdmin.get('/upgrade', adminController.notice)
 routerAdmin.post('/upgrade/:userId', adminController.acceptUpgrade)
 routerAdmin.post('/reject/:userId', adminController.rejectUpgrade)
+routerAdmin.get('/products', adminController.getProduct)
+routerAdmin.get('/users/:usersId', adminController.infoUsers)
+

@@ -2,9 +2,13 @@ import {Request, Response} from "express";
 import {Account} from "../model/account";
 import {MerchantShop} from "../model/merchant-shop";
 import {Notice} from "../model/notice";
+import {Products} from "../model/product";
 
 
 export class AdminController {
+    getToken = async (req: any) => {
+        return req.decode
+    }
     showHome = async (req: Request, res: Response) => {
 
     }
@@ -117,6 +121,22 @@ export class AdminController {
             message: "Reject done",
             status: true
         })
+    }
+    getProduct = async (req: Request, res: Response) => {
+        let products = await Products.find().sort({quantitySold: -1})
+        return res.status(200).json(products)
+    }
+    infoUsers = async (req: Request, res: Response) => {
+        try{
+            let infoUser = await Account.find({username: req.params.usersId})
+            let infoShop = await MerchantShop.find({account: infoUser[0]._id})
+            return res.status(200).json({
+                infoUser,
+                infoShop
+            })
+        } catch (err) {
+            return res.send(err.stack);
+        }
     }
 
 
